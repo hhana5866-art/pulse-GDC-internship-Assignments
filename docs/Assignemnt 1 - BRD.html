@@ -1,0 +1,383 @@
+<title>OTP Registration Build Brief</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#F5F7F7; --surface:#FFFFFF; --sunk:#EDF1F1;
+    --ink:#15201F; --ink-2:#4F5F5E; --ink-3:#7E8D8C;
+    --rule:#DCE3E2; --rule-2:#C3CECD;
+    --accent:#0E5F6B; --accent-soft:#E2F0F1;
+    --l1:#A93520; --l1-soft:#FAE9E5;
+    --l2:#8A5A0C; --l2-soft:#FBF0DD;
+    --l3:#1A6349; --l3-soft:#E3F1EB;
+    --serif:"IBM Plex Serif",Georgia,serif;
+    --sans:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0F1514; --surface:#161E1D; --sunk:#1B2524;
+      --ink:#E4EBEA; --ink-2:#9EAEAD; --ink-3:#71817F;
+      --rule:#26312F; --rule-2:#35433F;
+      --accent:#5FC6D3; --accent-soft:#132B2E;
+      --l1:#FF8B72; --l1-soft:#2E1913;
+      --l2:#EAB259; --l2-soft:#2C2213;
+      --l3:#63C69C; --l3-soft:#12291F;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0F1514; --surface:#161E1D; --sunk:#1B2524;
+    --ink:#E4EBEA; --ink-2:#9EAEAD; --ink-3:#71817F;
+    --rule:#26312F; --rule-2:#35433F;
+    --accent:#5FC6D3; --accent-soft:#132B2E;
+    --l1:#FF8B72; --l1-soft:#2E1913;
+    --l2:#EAB259; --l2-soft:#2C2213;
+    --l3:#63C69C; --l3-soft:#12291F;
+  }
+
+  *{box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .page{max-width:1060px;margin:0 auto;padding:40px 24px 80px;}
+
+  .masthead{border-bottom:3px solid var(--ink);padding-bottom:18px;margin-bottom:30px;display:flex;flex-direction:column;gap:10px;}
+  .kicker{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,40px);line-height:1.08;letter-spacing:-.015em;margin:0;text-wrap:balance;}
+  .sub{margin:0;color:var(--ink-2);max-width:64ch;font-size:16px;}
+  .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+  .meta span{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:4px 9px;}
+  .meta b{color:var(--ink);font-weight:600;}
+
+  .doc{display:grid;grid-template-columns:180px 1fr;gap:46px;align-items:start;}
+  @media (max-width:900px){.doc{grid-template-columns:1fr;gap:24px;}}
+  .toc{position:sticky;top:20px;display:flex;flex-direction:column;gap:7px;}
+  @media (max-width:900px){.toc{position:static;background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:16px;}}
+  .toc h4{margin:0 0 3px;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);}
+  .toc a{display:flex;gap:9px;color:var(--ink-2);text-decoration:none;font-size:13.5px;line-height:1.3;}
+  .toc a span{font-family:var(--mono);font-size:11px;color:var(--ink-3);flex:none;width:12px;}
+  .toc a:hover{color:var(--accent);}
+  .toc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+  .body{min-width:0;display:flex;flex-direction:column;gap:38px;}
+  section{scroll-margin-top:20px;display:flex;flex-direction:column;gap:14px;}
+  h2{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:0;padding-bottom:8px;border-bottom:1px solid var(--rule-2);display:flex;align-items:baseline;gap:11px;}
+  h2 .num{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);flex:none;}
+  h3{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);margin:6px 0 0;}
+  p{margin:0;max-width:74ch;}
+  .lead{color:var(--ink-2);}
+  code{font-family:var(--mono);font-size:.88em;background:var(--sunk);border-radius:3px;padding:1px 5px;}
+
+  ul.bare{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px;}
+  ul.bare > li{display:flex;gap:10px;}
+  ul.bare > li::before{content:"—";color:var(--ink-3);flex:none;}
+
+  .reqs{display:flex;flex-direction:column;gap:1px;}
+  .req{display:grid;grid-template-columns:56px 1fr;gap:12px;padding:9px 11px;border-radius:3px;align-items:start;}
+  .req:nth-child(odd){background:var(--surface);}
+  .req .rid{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);padding-top:1px;}
+  .req .why{display:block;margin-top:4px;font-size:13.5px;color:var(--ink-3);}
+
+  .tablewrap{overflow-x:auto;border:1px solid var(--rule);border-radius:4px;background:var(--surface);}
+  table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:480px;}
+  th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--rule);vertical-align:top;}
+  thead th{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);background:var(--sunk);}
+  tbody tr:last-child td{border-bottom:none;}
+  td.id{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);white-space:nowrap;}
+  td.val{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  td.status{font-family:var(--mono);font-size:12.5px;font-weight:600;white-space:nowrap;}
+
+  pre{margin:0;background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:4px;padding:13px 15px;overflow-x:auto;}
+  pre code{background:none;padding:0;font-size:12.5px;line-height:1.6;display:block;white-space:pre;}
+  .endpoint{display:flex;flex-direction:column;gap:8px;}
+  .ep-title{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+  .verb{font-family:var(--mono);font-size:11px;font-weight:600;background:var(--accent);color:var(--paper);border-radius:3px;padding:3px 8px;}
+  .path{font-family:var(--mono);font-size:13.5px;font-weight:500;}
+
+  .call{border-radius:4px;padding:12px 15px;font-size:14.5px;line-height:1.5;border:1px solid;max-width:76ch;}
+  .call.warn{background:var(--l1-soft);border-color:var(--l1);}
+  .call.note{background:var(--accent-soft);border-color:var(--accent);}
+
+  .tier{border:1px solid var(--rule);border-radius:5px;background:var(--surface);overflow:hidden;}
+  .tier-head{display:flex;align-items:center;gap:11px;padding:11px 16px;border-bottom:1px solid var(--rule);flex-wrap:wrap;}
+  .tier-badge{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:3px 8px;border-radius:3px;}
+  .tier-name{font-weight:700;font-size:15px;}
+  .tier-note{margin-left:auto;font-size:12.5px;color:var(--ink-3);}
+  .tier ol{margin:0;padding:12px 16px 14px 0;list-style:none;counter-reset:a;display:flex;flex-direction:column;gap:8px;}
+  .tier li{counter-increment:a;display:flex;gap:11px;font-size:14.5px;line-height:1.45;padding-left:16px;}
+  .tier li::before{content:counter(a);font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink-3);flex:none;padding-top:3px;width:12px;}
+  .t1{border-left:3px solid var(--l1);} .t1 .tier-badge{background:var(--l1-soft);color:var(--l1);}
+  .t2{border-left:3px solid var(--l2);} .t2 .tier-badge{background:var(--l2-soft);color:var(--l2);}
+  .t3{border-left:3px solid var(--l3);} .t3 .tier-badge{background:var(--l3-soft);color:var(--l3);}
+
+  .days{display:flex;flex-direction:column;gap:1px;}
+  .day{display:grid;grid-template-columns:64px 1fr;gap:12px;padding:9px 11px;border-radius:3px;align-items:baseline;}
+  .day:nth-child(odd){background:var(--surface);}
+  .day .dnum{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--accent);}
+
+  .foot{margin-top:44px;border-top:1px solid var(--rule);padding-top:14px;font-family:var(--mono);font-size:11px;color:var(--ink-3);}
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="kicker">Build Brief · Internship Programme</div>
+    <h1>User Registration with Email OTP</h1>
+    <p class="sub">A user signs up with an email and a password, receives a six-digit code by email, and only becomes a real account once that code checks out.</p>
+    <div class="meta">
+      <span><b>5 days</b></span>
+      <span>Java · Spring Boot · PostgreSQL · Redis</span>
+      <span>PR on your fork</span>
+      <span><b>No grades</b> — code review</span>
+    </div>
+  </header>
+
+  <div class="doc">
+
+    <nav class="toc">
+      <h4>Contents</h4>
+      <a href="#s1"><span>1</span>What you're building</a>
+      <a href="#s2"><span>2</span>How it must behave</a>
+      <a href="#s3"><span>3</span>The numbers</a>
+      <a href="#s4"><span>4</span>Response envelope</a>
+      <a href="#s5"><span>5</span>The endpoints</a>
+      <a href="#s6"><span>6</span>Rules to work within</a>
+      <a href="#s7"><span>7</span>When it's done</a>
+      <a href="#s8"><span>8</span>Submitting it</a>
+      <a href="#s9"><span>9</span>Your five days</a>
+    </nav>
+
+    <main class="body">
+
+      <section id="s1">
+        <h2><span class="num">01</span>What you're building</h2>
+        <p>Anyone can type any email address into a signup form. Without a verification step your user table fills up with typos that never reach a human and addresses belonging to other people. So a registration only becomes an account once the person proves they can read mail sent to that address. Until then it is a temporary, expiring intention to register — <strong>not a user</strong>.</p>
+
+        <h3>In scope</h3>
+        <ul class="bare">
+          <li>Starting a registration with an email and password</li>
+          <li>Generating, sending, expiring and verifying the code</li>
+          <li>Resending a code, with limits</li>
+          <li>Creating the account once the code is verified</li>
+          <li>A consistent response shape everywhere, and a schema managed as versioned migrations</li>
+        </ul>
+
+        <h3>Not in scope — don't build these</h3>
+        <ul class="bare">
+          <li>Login, sessions or JWTs</li>
+          <li>Password reset</li>
+          <li>Any frontend — this is an API only</li>
+          <li>Social login, roles, permissions, deployment</li>
+        </ul>
+        <div class="call warn">Every year someone spends two days on a login endpoint nobody asked for, then runs out of time for the things that were written down. Read that second list twice.</div>
+      </section>
+
+      <section id="s2">
+        <h2><span class="num">02</span>How it must behave</h2>
+        <div class="reqs">
+          <div class="req"><span class="rid">FR-1</span><span>Starting a registration takes an email and a password, and returns an id used by the calls that follow.</span></div>
+          <div class="req"><span class="rid">FR-2</span><span>The code is six digits and expires on its own — with no cleanup code written by you.</span></div>
+          <div class="req"><span class="rid">FR-3</span><span>The password is hashed before it is stored anywhere, including while the registration is still pending. Plaintext never reaches the database, Redis, a log line or an error message.</span></div>
+          <div class="req"><span class="rid">FR-4</span><span>The code is delivered by real email. Printing it to the console or returning it in the response is not delivery.</span></div>
+          <div class="req"><span class="rid">FR-5</span><span>An account is created only when a correct, unexpired, unused code is submitted.</span></div>
+          <div class="req"><span class="rid">FR-6</span><span>One usable code at a time. Issuing a new one kills the previous one immediately.</span></div>
+          <div class="req"><span class="rid">FR-7</span><span>Wrong attempts are counted. At the limit the code is dead — even if the correct value arrives afterwards.</span></div>
+          <div class="req"><span class="rid">FR-8</span><span>Resending is limited by a cooldown and a daily cap per address.</span></div>
+          <div class="req"><span class="rid">FR-9</span><span>A pending registration never sits in the users table, and an abandoned one never blocks the real owner of that address from registering later.</span></div>
+          <div class="req"><span class="rid">FR-10</span><span>Starting a registration responds identically whether or not the address already has an account.<span class="why">If it does exist, send that person a "someone tried to sign up with your address" email instead of a code.</span></span></div>
+          <div class="req"><span class="rid">FR-11</span><span>Verification and account creation succeed or fail together. If creation fails, the code is not consumed and the user can retry.</span></div>
+          <div class="req"><span class="rid">FR-12</span><span>Emails are stored and compared trimmed and lowercased, so <code>Ali@X.com</code> and <code>ali@x.com</code> are the same person.</span></div>
+        </div>
+      </section>
+
+      <section id="s3">
+        <h2><span class="num">03</span>The numbers</h2>
+        <p class="lead">Fixed values. Read them from configuration rather than hard-coding them.</p>
+        <div class="tablewrap">
+          <table>
+            <tbody>
+              <tr><td>Code format</td><td class="val">6 digits, numeric</td></tr>
+              <tr><td>Code lifetime</td><td class="val">5 minutes</td></tr>
+              <tr><td>Verify attempts per code</td><td class="val">5</td></tr>
+              <tr><td>Gap between sends</td><td class="val">60 seconds</td></tr>
+              <tr><td>Sends per address per 24h</td><td class="val">10</td></tr>
+              <tr><td>Pending registration lifetime</td><td class="val">15 minutes</td></tr>
+              <tr><td>Password minimum</td><td class="val">8 characters, BCrypt only</td></tr>
+              <tr><td>Timestamps</td><td class="val">ISO-8601, UTC</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="lead">A pending registration outlives a single code on purpose — it has to survive a resend.</p>
+      </section>
+
+      <section id="s4">
+        <h2><span class="num">04</span>Response envelope</h2>
+        <p>Every response — success or failure — comes back in the same envelope, with exactly one of the two fields filled in.</p>
+<pre><code>{
+  "result": { ... }  or null,
+  "error":  { ... }  or null
+}</code></pre>
+        <p>Success fills <code>result</code> and leaves <code>error</code> null. Failure fills <code>error</code> and leaves <code>result</code> null. Both filled is a bug. Both null is a bug.</p>
+
+<pre><code>200/201/202                          any failure
+{                                    {
+  "result": { ... },                   "result": null,
+  "error": null                        "error": {
+}                                        "code": 3001,
+                                         "message": "The code is not correct."
+                                       }
+                                     }</code></pre>
+
+        <div class="reqs">
+          <div class="req"><span class="rid">E-1</span><span>Every response uses it — including 500s, and including errors Spring produces before your code runs: unknown routes, wrong method, malformed JSON.<span class="why">That last group is the interesting part. Those don't go through your exception handler — find out where they do go.</span></span></div>
+          <div class="req"><span class="rid">E-2</span><span>Exactly one of <code>result</code> and <code>error</code> is non-null. Never both, never neither.</span></div>
+          <div class="req"><span class="rid">E-3</span><span><code>error.code</code> is a number from the catalogue below, serialised as a number and not a string.</span></div>
+          <div class="req"><span class="rid">E-4</span><span><code>error.message</code> is safe to show a user. No stack traces, class names or SQL — in any profile.</span></div>
+          <div class="req"><span class="rid">E-5</span><span>Built in one place, not assembled inside controllers. HTTP status codes still mean what they should — never <code>200 OK</code> with an error inside.</span></div>
+          <div class="req"><span class="rid">E-6</span><span>When several fields are invalid, the message names all of them, not just the first.</span></div>
+        </div>
+
+        <h3>Error codes</h3>
+        <p class="lead">The number goes on the wire; the constant is what it should be called in your code. Ranges: <code>1xxx</code> request, <code>2xxx</code> registration, <code>3xxx</code> the code, <code>4xxx</code> rate limits, <code>9xxx</code> unexpected.</p>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Code</th><th>Constant</th><th>When</th><th>HTTP</th></tr></thead>
+            <tbody>
+              <tr><td class="val">1001</td><td class="id">VALIDATION_FAILED</td><td>Request body failed validation</td><td class="status">400</td></tr>
+              <tr><td class="val">2001</td><td class="id">REGISTRATION_NOT_FOUND</td><td>No pending registration with that id</td><td class="status">404</td></tr>
+              <tr><td class="val">2002</td><td class="id">REGISTRATION_ALREADY_COMPLETED</td><td>Already produced an account</td><td class="status">409</td></tr>
+              <tr><td class="val">3001</td><td class="id">OTP_INVALID</td><td>Wrong code, attempts remaining</td><td class="status">400</td></tr>
+              <tr><td class="val">3002</td><td class="id">OTP_EXPIRED</td><td>Code ran out of time</td><td class="status">410</td></tr>
+              <tr><td class="val">3003</td><td class="id">TOO_MANY_ATTEMPTS</td><td>Attempt limit hit; code now dead</td><td class="status">429</td></tr>
+              <tr><td class="val">4001</td><td class="id">RESEND_TOO_SOON</td><td>Resend inside the cooldown</td><td class="status">429</td></tr>
+              <tr><td class="val">4002</td><td class="id">RESEND_LIMIT_EXCEEDED</td><td>Daily cap reached</td><td class="status">429</td></tr>
+              <tr><td class="val">9001</td><td class="id">INTERNAL_ERROR</td><td>Anything unhandled</td><td class="status">500</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="s5">
+        <h2><span class="num">05</span>The endpoints</h2>
+        <p class="lead">Paths, field names and status codes are fixed. Each success below shows only what goes inside <code>result</code>. Base path <code>/api/v1</code>.</p>
+
+        <div class="endpoint">
+          <div class="ep-title"><span class="verb">POST</span><span class="path">/registrations</span></div>
+<pre><code>→  { "email": "ali@example.com", "password": "correct-horse-9" }
+
+←  202   { "registrationId": "3f2a91c4-7d5e-4b18-9a63-1e0c8f4d2b77",
+           "expiresAt": "2026-09-10T14:47:00Z",
+           "resendAvailableAt": "2026-09-10T14:43:00Z" }</code></pre>
+        </div>
+
+        <div class="endpoint">
+          <div class="ep-title"><span class="verb">POST</span><span class="path">/registrations/{id}/verify</span></div>
+<pre><code>→  { "code": "418302" }
+
+←  201   { "userId": "b81d7f60-2c44-4a0e-8f31-95a7c6e0d213",
+           "email": "ali@example.com",
+           "createdAt": "2026-09-10T14:44:12Z" }</code></pre>
+        </div>
+
+        <div class="endpoint">
+          <div class="ep-title"><span class="verb">POST</span><span class="path">/registrations/{id}/resend</span></div>
+<pre><code>→  no body
+
+←  202   { "expiresAt": "2026-09-10T14:52:00Z",
+           "resendAvailableAt": "2026-09-10T14:48:00Z" }</code></pre>
+        </div>
+
+        <div class="call warn"><strong>Never return the code.</strong> Not in a response, not in a header, not in a log line, not "just while testing". A code visible anywhere but the recipient's inbox defeats the whole feature.</div>
+      </section>
+
+      <section id="s6">
+        <h2><span class="num">06</span>Rules to work within</h2>
+        <p class="lead">These push you toward tools you haven't used yet. None of them names the library that solves it — finding that is part of the work.</p>
+        <div class="reqs">
+          <div class="req"><span class="rid">C-1</span><span>Starting the app against an <strong>empty database</strong> must build the whole schema. <code>ddl-auto</code> must be <code>validate</code> or <code>none</code>, and running SQL by hand doesn't count.<span class="why">Your reviewer will drop the database, start your app, and expect the schema back.</span></span></div>
+          <div class="req"><span class="rid">C-2</span><span>No hand-written SQL for ordinary lookups and saves. Your data access layer should be interfaces, not classes you wrote.</span></div>
+          <div class="req"><span class="rid">C-3</span><span>Codes and pending registrations must <strong>expire by themselves</strong>. No scheduled task, no background sweeper, no "delete where expired".<span class="why">This rules out PostgreSQL for them. Something else in your compose file does exactly this.</span></span></div>
+          <div class="req"><span class="rid">C-4</span><span>Real SMTP. The compose file runs a mail server with an inbox at <code>localhost:8025</code> — your codes must land there as actual messages. Pointing at a real provider instead must be configuration, not a code change.</span></div>
+          <div class="req"><span class="rid">C-5</span><span>Nothing secret in the repository. Configuration comes from environment variables, with a committed example file listing the names.</span></div>
+          <div class="req"><span class="rid">C-6</span><span>A clean clone runs with the commands in your README, on a machine that has never seen your project.</span></div>
+          <div class="req"><span class="rid">C-7</span><span>Input is validated declaratively at the edge, before any business logic or database call runs.</span></div>
+        </div>
+      </section>
+
+      <section id="s7">
+        <h2><span class="num">07</span>When it's done</h2>
+        <p class="lead">Priorities, not grades. Level 1 is the foundation. Level 2 is where most of the learning is. Level 3 is there if you finish early.</p>
+
+        <div class="tier t1">
+          <div class="tier-head"><span class="tier-badge">Level 1</span><span class="tier-name">Build this first</span><span class="tier-note">Everything depends on it</span></div>
+          <ol>
+            <li>Empty database plus your README steps → the app starts and the schema is created automatically.</li>
+            <li>A valid signup returns 202 with a registrationId, and a real email with a six-digit code arrives.</li>
+            <li>The correct code in time returns 201, and a user row exists holding a BCrypt hash.</li>
+            <li>A wrong code returns 400 with code <code>3001</code>, and no user is created.</li>
+            <li>Someone abandons a registration for an address; the real owner can still register it later.</li>
+            <li>Drop the database, restart the app, and the schema comes back with no manual steps.</li>
+            <li>The plaintext password appears nowhere — not in the database, not in the logs.</li>
+          </ol>
+        </div>
+
+        <div class="tier t2">
+          <div class="tier-head"><span class="tier-badge">Level 2</span><span class="tier-name">Where the learning is</span><span class="tier-note">Aim to reach all of these</span></div>
+          <ol>
+            <li>A code older than five minutes returns 410 / <code>3002</code>, and it has left storage without any cleanup code of yours.</li>
+            <li>A sixth wrong attempt returns 429 / <code>3003</code> — and the correct code no longer works either.</li>
+            <li>Resending inside the cooldown returns 429 / <code>4001</code>.</li>
+            <li>After the cooldown the new code works and the old one doesn't.</li>
+            <li>A bad email and a short password in one request return 400 / <code>1001</code> naming both problems.</li>
+            <li>Every response is the envelope — including a mistyped URL and a malformed JSON body.</li>
+            <li>Sending the email doesn't hold up the response — a slow mail server doesn't make the API slow.</li>
+            <li>With the mail server stopped, the registration still behaves sanely, the failure is visible in the logs, and nothing is left half-broken.</li>
+          </ol>
+        </div>
+
+        <div class="tier t3">
+          <div class="tier-head"><span class="tier-badge">Level 3</span><span class="tier-name">If you get there</span><span class="tier-note">Only once 1 and 2 work</span></div>
+          <ol>
+            <li>The eleventh send to one address in 24 hours returns 429 / <code>4002</code>.</li>
+            <li>Mail sent through a real external provider to a real inbox.</li>
+            <li>A formatted HTML email rather than plain text.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="s8">
+        <h2><span class="num">08</span>Submitting it</h2>
+        <ul class="bare">
+          <li>Branch <code>feature/registration-otp</code> on your fork, PR opened against your own <code>main</code>, reviewer added</li>
+          <li>PR description says what you finished and — honestly — what you didn't</li>
+          <li>README explains how to run it from a clean clone, including every environment variable</li>
+          <li>Nothing secret committed, no IDE folders</li>
+          <li>Small commits with messages that say what changed and why</li>
+          <li>It compiles and starts</li>
+        </ul>
+        <p>Then you get a code review — a conversation, not a score. Expect it to cover whether it runs on a clean machine, why the pending registration lives where it does, whether the envelope is built in one place, how mail and Redis are wired and what happens when they're down, and the code itself.</p>
+        <div class="call note">Bring the parts you're unsure about rather than hiding them. There's no mark to protect, so the conversation is the entire point — and "I couldn't work out how to do X" is a perfectly good thing to say in it.</div>
+      </section>
+
+      <section id="s9">
+        <h2><span class="num">09</span>Your five days</h2>
+        <div class="days">
+          <div class="day"><span class="dnum">Day 1</span><span>Read this. Run the scaffold. Connect PostgreSQL, write your first migration, get one entity saving and loading.</span></div>
+          <div class="day"><span class="dnum">Day 2</span><span>Envelope and central error handling first — everything returns through it. Then the pending registration and <code>POST /registrations</code>, with validation and password hashing.</span></div>
+          <div class="day"><span class="dnum">Day 3</span><span>Email. Get a real code into the inbox. Start early — this is the day that surprises people.</span></div>
+          <div class="day"><span class="dnum">Day 4</span><span>Verify, account creation, transaction boundary. Move codes into Redis with a TTL and add attempt limits.</span></div>
+          <div class="day"><span class="dnum">Day 5</span><span>Resend rules, edge cases, README, and open the PR with time to spare.</span></div>
+        </div>
+
+        <h3>When you're stuck</h3>
+        <ul class="bare">
+          <li>Ninety minutes on the same error is enough — ask. Struggling is where the learning is; losing a day silently isn't.</li>
+          <li>A good question has four parts: what you expected, what happened, the actual error, and two things you already tried.</li>
+          <li>Read the stack trace to the bottom. The useful line is usually after <code>Caused by</code>.</li>
+          <li>Search the concept, not your error message.</li>
+          <li>Use AI to understand things, not to produce them. If you can't explain your own repository in the review, the week gave you nothing.</li>
+        </ul>
+      </section>
+
+      <p class="foot">Registration with Email OTP · build brief · questions go to your reviewer before you start, not after.</p>
+
+    </main>
+  </div>
+</div>

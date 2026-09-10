@@ -1,0 +1,31 @@
+# Build output
+target/
+!.mvn/wrapper/maven-wrapper.properties
+
+# Local configuration and secrets — never commit these
+.env
+*.env
+!.env.example
+application-local.yml
+application-local.yaml
+application-local.properties
+src/main/resources/application-local.*
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+nbproject/
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

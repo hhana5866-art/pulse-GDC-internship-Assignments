@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: registration-otp
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.internship.registration: DEBUG
+
+# ---------------------------------------------------------------------
+# Everything else is yours.
+#
+# There is no database, cache or mail configuration here yet, which is
+# why the application starts cleanly with no services running.
+#
+# As you add dependencies you will need to add configuration for them.
+# Two rules while you do:
+#
+#   1. Anything secret comes from an environment variable, never from
+#      this file. The pattern looks like:  ${MAIL_PASSWORD}
+#      See .env.example for the names.
+#
+#   2. Values from the brief (code lifetime, attempt limits, cooldowns)
+#      belong in configuration too, not hard-coded in your classes.
+#      Give them your own key names under a prefix you choose.
+# ---------------------------------------------------------------------
