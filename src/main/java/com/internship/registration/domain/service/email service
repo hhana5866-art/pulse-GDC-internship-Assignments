@@ -1,0 +1,43 @@
+package com.internship.registrationotp.service;
+
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+@Service
+public class EmailService {
+
+    private final JavaMailSender mailSender;
+
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    @Async
+    public void sendOtpEmail(String toEmail, String otpCode) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("Your Registration Verification Code");
+            message.setText("Your 6-digit verification code is: " + otpCode + "\nIt expires in 5 minutes.");
+            mailSender.send(message);
+        } catch (Exception e) {
+          
+            System.err.println("Failed to send email to " + toEmail + ": " + e.getMessage());
+        }
+    }
+
+    @Async
+    public void sendAlreadyRegisteredEmail(String toEmail) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("Attempted Registration Notice");
+            message.setText("Someone tried to sign up using your email address. If this was not you, you can safely ignore this email.");
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Failed to send notice email to " + toEmail + ": " + e.getMessage());
+        }
+    }
+}

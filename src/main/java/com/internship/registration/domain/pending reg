@@ -1,0 +1,50 @@
+package com.internship.registrationotp.domain;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
+
+import java.time.OffsetDateTime;
+
+@RedisHash("pending_registrations")
+public class PendingRegistration {
+
+    @Id
+    private String id;
+    private String email;
+    private String passwordHash;
+    private OffsetDateTime expiresAt;
+    private OffsetDateTime resendAvailableAt;
+
+    @TimeToLive
+    private Long ttl = 900L; // 15 دقيقة (900 ثانية)
+
+    public PendingRegistration() {}
+
+    public PendingRegistration(String id, String email, String passwordHash, OffsetDateTime expiresAt, OffsetDateTime resendAvailableAt) {
+        this.id = id;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.expiresAt = expiresAt;
+        this.resendAvailableAt = resendAvailableAt;
+    }
+
+    // Getters and Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+
+    public OffsetDateTime getExpiresAt() { return expiresAt; }
+    public void setExpiresAt(OffsetDateTime expiresAt) { this.expiresAt = expiresAt; }
+
+    public OffsetDateTime getResendAvailableAt() { return resendAvailableAt; }
+    public void setResendAvailableAt(String resendAvailableAt) { this.resendAvailableAt = OffsetDateTime.parse(resendAvailableAt); }
+
+    public Long getTtl() { return ttl; }
+    public void setTtl(Long ttl) { this.ttl = ttl; }
+}

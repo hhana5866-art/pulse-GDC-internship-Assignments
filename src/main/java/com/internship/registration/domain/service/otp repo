@@ -1,0 +1,6 @@
+package com.internship.registrationotp.domain;
+
+import org.springframework.data.repository.CrudRepository;
+
+public interface OtpDataRepository extends CrudRepository<OtpData, String> {
+}

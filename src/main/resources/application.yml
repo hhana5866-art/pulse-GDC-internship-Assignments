@@ -1,28 +1,75 @@
 spring:
   application:
-    name: registration-otp
+    name: pulse-GDC-internship-assignments
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/registration}
+    username: ${DB_USERNAME:registration}
+    password: ${DB_PASSWORD:registration}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
 
 server:
   port: 8080
+  error:
+    include-message: never
+    include-stacktrace: never
 
-logging:
-  level:
-    com.internship.registration: DEBUG
+app:
+  otp:
+    length: 6
+    ttl: 5m
+    max-attempts: 5
+    resend-cooldown: 60s
+    daily-cap: 10
+  registration:
+    ttl: 15m
+  password:
+    min-length: 8
 
-# ---------------------------------------------------------------------
-# Everything else is yours.
-#
-# There is no database, cache or mail configuration here yet, which is
-# why the application starts cleanly with no services running.
-#
-# As you add dependencies you will need to add configuration for them.
-# Two rules while you do:
-#
-#   1. Anything secret comes from an environment variable, never from
-#      this file. The pattern looks like:  ${MAIL_PASSWORD}
-#      See .env.example for the names.
-#
-#   2. Values from the brief (code lifetime, attempt limits, cooldowns)
-#      belong in configuration too, not hard-coded in your classes.
-#      Give them your own key names under a prefix you choose.
-# ---------------------------------------------------------------------
+    
+server.port=8080
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/registration_db
+spring.datasource.username=user
+spring.datasource.password=password
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=true
+
+
+spring.data.redis.host=localhost
+spring.data.redis.port=6379
+
+
+spring.mail.host=localhost
+spring.mail.port=1025
+spring.mail.properties.mail.smtp.auth=false
+spring.mail.properties.mail.smtp.starttls.enable=false
